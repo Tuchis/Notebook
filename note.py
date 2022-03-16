@@ -1,58 +1,49 @@
-"""
-MODULE DOCSTRING
-"""
-from datetime import datetime
+'''
+Created on Aug 30, 2015
+@author: Sameer Adhikari
+'''
+import datetime
 
+# the id available for the next note
+available_id = 0
 
-class Note:
-    def __init__(self, memo, tags, note_id):
-        self.memo = memo
-        self.creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        self.tags = tags
-        self.note_id = note_id
-
+class Note(object):
+    '''Represent a note in the notebook.
+    Match against a string in searches.
+    Store tags for each note.
+    '''
+    def __init__(self, note_text, note_tags=''):
+        '''Initialize a note with a note_text and optional note_tags.
+        Automatically assign an id and creation date.
+        '''
+        global available_id
+        self.note_text = note_text
+        self.note_tags = note_tags
+        self.note_id = available_id
+        available_id += 1
+        self.creation_date = datetime.date.today()
+        return
+    
+    def contains(self, search_string):
+        '''Determines if the note contains the search_string.
+        Check both the note_text and note_tags for the presence 
+        of the search_string as a sub string in the note.
+        The search is case-sensitive.
+        '''
+        return search_string in self.note_text or search_string in self.note_tags
+    
     def __str__(self):
-        return f"The memo is - {self.memo}\n" \
-               f"Date created - {self.creation_date}\n" \
-               f"Tags - {self.tags}\n" \
-               f"Note id - {self.note_id}"
+        '''String representation of the object
+        '''
+        return('Note Id = {0}, Date = {1}, Text = {2}, Tags = {3}'
+              .format(self.note_id, self.creation_date, self.note_text, self.note_tags))    
+        
+    __repr__ = __str__
 
-    def match(self, search_filter: str):
-        """
-        Checks match of the text
-        """
-        return search_filter in self.memo
-
-    def tags_filter(self, search_filter: str):
-        """
-        Checks match with the tags
-        """
-        return search_filter in self.tags
-
-    def id_match(self, given_id):
-        """
-        Checks, if the id matches with note
-        """
-        return given_id == self.note_id
-
-    def memo_change(self, new_memo):
-        """
-        Changes teh memo
-        """
-        self.memo = new_memo
-
-    def tags_change(self, new_tags):
-        """
-        Changes tags
-        """
-        self.tags = new_tags
-
-
-def main():
-    """
-    MAIN FUNCTION
-    """
-
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    n1 = Note('first hello')
+    n2 = Note('second_hello') 
+    print('n1 id = {0}'.format(n1.note_id))       
+    print('n2 id = {0}'.format(n2.note_id))      
+    print(n1.contains('hello')) 
+    print(n2.contains('again')) 
