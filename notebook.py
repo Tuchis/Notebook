@@ -57,13 +57,13 @@ class Notebook:
         """
         Modifies the memo in notes by its id
         """
-        [note.memo_change(memo) for note in self.notes if note.note_id == given_id]
+        [note.memo_change(memo) for note in self.notes if str(note.note_id) == given_id]
 
     def modify_tags(self, given_id, tags):
         """
         Modifies the memo in notes by its tag
         """
-        [note.tags_change(tags) for note in self.notes if note.note_id == given_id]
+        [note.tags_change(tags) for note in self.notes if str(note.note_id) == given_id]
 
     def print_note_by_id(self, given_id):
         """
@@ -84,7 +84,9 @@ class Menu:
             "3" : self.print_by_id,
             "4" : self.find_by_tag,
             "5" : self.find_by_text,
-            "6" : self.exit
+            "6" : self.modify_note,
+            "7" : self.modify_tags,
+            "8" : self.exit
         }
 
     def show_menu(self):
@@ -94,8 +96,10 @@ class Menu:
               "3. Print note by ID\n"
               "4. Find note by tags\n"
               "5. Find note by text\n"
-              "6. Exit")
-        return input("Your choice:")
+              "6. Modify note by ID\n"
+              "7. Modify tags by note ID\n"
+              "8. Exit")
+        return input("Your choice: ")
 
     def show_notes(self):
         print(self.notebook)
@@ -120,6 +124,16 @@ class Menu:
     def find_by_text(self):
         text = input("Input the text: ")
         self.notebook.search_by_text(text)
+
+    def modify_note(self):
+        id = input("Input the ID: ")
+        note = input("Input new note: ")
+        self.notebook.modify_memo(id, note)
+
+    def modify_tags(self):
+        id = input("Input the ID: ")
+        tags = input("Input new tags: ").split()
+        self.notebook.modify_tags(id, tags)
 
     def run(self):
         while True:

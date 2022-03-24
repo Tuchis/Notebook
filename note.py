@@ -12,7 +12,7 @@ class Note:
         self.note_id = note_id
 
     def __str__(self):
-        return f"The memo is - {self.memo}\n" \
+        return f"'{self.memo}'\n" \
                f"Date created - {self.creation_date}\n" \
                f"Tags - {self.tags}\n" \
                f"Note id - {self.note_id}"
