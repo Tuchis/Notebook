@@ -1,6 +1,8 @@
 """
 MODULE DOCSTRING
 """
+import sys
+
 import note
 
 
@@ -17,6 +19,11 @@ class Notebook:
         return f"The notebook\n" \
                f"There are {len(self.notes)} in the notebook"
 
+    def print_notes(self):
+        for note in self.notes:
+            print(note)
+
+
     def search_by_text(self, filter) -> list:
         """
         Search by the text among the notes
@@ -24,20 +31,20 @@ class Notebook:
         match = []
         [match.append(elem.note_id) for elem in self.notes if elem.match(filter)]
         if match:
-            return f'The text is found in that notes - {str(match)[1:-1]}.'
+            print(f'The text is found in that notes - {str(match)[1:-1]}.')
         else:
-            return f"The text wasn't found in notes."
+            print(f"The text wasn't found in notes.")
 
     def search_by_tags(self, filter) -> list:
         """
         Search by the tags among the notes
         """
         match = []
-        [match.append(elem.note_id) for elem in self.notes if elem.match(filter)]
+        [match.append(elem.note_id) for elem in self.notes if elem.tags_filter(filter)]
         if match:
-            return f'Notes with such tags - {str(match)[1:-1]}.'
+            print(f'Notes with such tags - {str(match)[1:-1]}.')
         else:
-            return f"There are no notes with such tags."
+            print(f"There are no notes with such tags.")
 
     def new_note(self, memo, tags=""):
         """
@@ -63,36 +70,76 @@ class Notebook:
         Prints note by id
         """
         try:
-            return [note for note in self.notes if note.note_id == given_id][0]
+            print([note for note in self.notes if str(note.note_id) == given_id][0])
         except IndexError:
-            return "There are no notes with that id."
-
-
-class CommandOption:
-    def __int__(self):
-        pass
+            print("There are no notes with that id.")
 
 
 class Menu:
     def __init__(self):
-        pass
+        self.notebook = Notebook()
+        self.choices = {
+            "1" : self.show_notes,
+            "2" : self.create_note,
+            "3" : self.print_by_id,
+            "4" : self.find_by_tag,
+            "5" : self.find_by_text,
+            "6" : self.exit
+        }
+
+    def show_menu(self):
+        print("The menu:\n"
+              "1. Show all notes\n"
+              "2. Create new note\n"
+              "3. Print note by ID\n"
+              "4. Find note by tags\n"
+              "5. Find note by text\n"
+              "6. Exit")
+        return input("Your choice:")
+
+    def show_notes(self):
+        print(self.notebook)
+        self.notebook.print_notes()
+
+    def create_note(self):
+        while True:
+            note = input("Text of new note: ")
+            if note:
+                break
+        tags = input("Tags for new note (split them by space): ").split()
+        self.notebook.new_note(note, tags)
+
+    def print_by_id(self):
+        id = input("Input the ID: ")
+        self.notebook.print_note_by_id(id)
+
+    def find_by_tag(self):
+        tag = input("Input the tag: ")
+        self.notebook.search_by_tags(tag)
+
+    def find_by_text(self):
+        text = input("Input the text: ")
+        self.notebook.search_by_text(text)
+
+    def run(self):
+        while True:
+            choice = self.show_menu()
+            if choice in self.choices:
+                self.choices[choice]()
+            else:
+                print(f"{choice} is not a valid choice")
+
+    def exit(self):
+        print("Ok, bye")
+        sys.exit()
 
 
 def main():
     """
     MAIN FUNCTION
     """
-    notebook = Notebook()
-    print(notebook)
-    notebook.new_note("Hello", ["Start", "First"])
-    notebook.new_note("Good bye", ["First"])
-    notebook.new_note("Vlad", ["Name"])
-    print(notebook.print_note_by_id(3))
-    notebook.modify_memo(1, "Not Hello")
-    notebook.modify_tags(1, ["New Tag"])
-    print(notebook.print_note_by_id(0))
-    print(notebook.search_by_text("o"))
-    print(notebook.search_by_tags("First"))
+    menu = Menu()
+    menu.run()
 
 if __name__ == "__main__":
     main()
